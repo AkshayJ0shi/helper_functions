@@ -2,6 +2,8 @@
 ### Storing them here so they're easily accessible.
 
 import tensorflow as tf
+from sklearn.metrics import accuracy_score ,precision_recall_fscore_support
+import numpy as np
 
 # Create a function to import an image and resize it to be able to be used with our model
 def load_and_prep_image(filename, img_shape=224, scale=True):
@@ -275,3 +277,22 @@ def calculate_results(y_true, y_pred):
                   "recall": model_recall,
                   "f1": model_f1}
   return model_results
+
+
+def calculate_results(y_true, y_pred):
+  """
+  Calculates model accuracy, recall, precision and f1-score when given y_true and y_pred
+  """
+  model_accuracy = (accuracy_score(y_true, y_pred) * 100)
+
+  # we do not want to return support from precision_recall_fscore_support. Hence "_" in the end
+  model_precision, model_recall, model_fscore, support = precision_recall_fscore_support(y_true, y_pred)
+
+  eval_obj = {
+      "Accuracy" : model_accuracy,
+      "Precision" : np.mean(model_precision),
+      "Recall" : np.mean(model_recall),
+      "F1-Score" : np.mean(model_fscore)
+  }
+
+  return eval_obj
